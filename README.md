@@ -1,11 +1,14 @@
 # Chatroom
 
-## Etapp 1
-##
-### Summary
+### Etapp 1
+####
+#### Summary
 Primitiivne toorik
-### Server
--
-### Client
-
-## Etapp 2
+#### Server
+-1
+-2
+-3
+#### Client
+-1
+-2
+### Etapp 2
