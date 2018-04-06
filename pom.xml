@@ -14,5 +14,44 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    
   </dependencies>
+
+  <!-- To compile with 1.5 sest v1.5 is not supported apparently -->
+  <properties>
+    <maven.compiler.source>1.6</maven.compiler.source>
+    <maven.compiler.target>1.6</maven.compiler.target>
+  </properties>
+  <!-- DEFAULT MANIFEST -->
+  <build>
+    <plugins>
+    <!-- Create a default manifest -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.1</version>
+        
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+            </manifest>
+          </archive>
+        </configuration>
+        
+      </plugin>
+    <!-- Allow easy jar execution -->
+    <plugin>
+      <groupId>org.codehaus.mojo</groupId>
+      <artifactId>exec-maven-plugin</artifactId>
+      <version>1.2.1</version>
+      <configuration>
+        <mainClass>com.utoopproject.app.App</mainClass>
+      </configuration>
+    </plugin>
+
+    </plugins>
+  </build>
+
 </project>
