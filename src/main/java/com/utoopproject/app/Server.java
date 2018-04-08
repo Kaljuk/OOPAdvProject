@@ -1,11 +1,12 @@
 package com.utoopproject.app;
 
+import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Server
- * 
  */
 public class Server {
 
@@ -16,34 +17,50 @@ public class Server {
     // 
     private int clientsServed = 0;
 
+    static List<RequestHandler> connectedClients = new ArrayList<RequestHandler>();
+
     /**
-     * 
+     *
      */
     public Server() {
-        
-        System.out.printf("[Server] <%d>", serverPort);
+        System.out.printf("[Server] Started <port %d>\n", serverPort);
     }
 
 
     // Server launch
-    public void startServer() throws Exception{
+    public void startServer() throws Exception {
         // Activate server
         serverOn = true;
         // Count served clients
         ServerSocket listen = new ServerSocket(serverPort);
 
         try {
-            while(serverOn) {
+            while (serverOn) {
                 RequestHandler handleRequest = new RequestHandler(listen.accept(), ++clientsServed);
                 handleRequest.start();
+
+                connectedClients.add(handleRequest);
+
+                System.out.printf("Client connected [ID: %d]\n", clientsServed);
             }
 
-        //} catch() {
-        
+            //} catch() {
+
         } finally {
             // End server
             listen.close();
         }
+    }
+
+    public static void messageClients(RequestHandler sender, String message) throws IOException {
+        System.out.println("DEBUG: Sending the entered message to other clients");
+
+        for (RequestHandler connectedClient : connectedClients) {
+            if (!(connectedClient.equals(sender))) {
+                connectedClient.sendMessage(message);
+            }
+        }
+
     }
 
     // // Getters
@@ -58,10 +75,10 @@ public class Server {
 
     // // Setters
     // Config
-    
+
     /**
-     * @param   newPort - Set a new port for the server
-     * @TODO    Method that returns an error if server is already on,
+     * @param newPort - Set a new port for the server
+     * @TODO Method that returns an error if server is already on,
      * which means that port can't be changed
      */
     public void setPort(int newPort) {
@@ -69,6 +86,7 @@ public class Server {
     }
 
     // // // FUNCTIONS
+
     /**
      * @action Closes the server
      */
