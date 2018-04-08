@@ -1,7 +1,7 @@
 # Chatroom
 
 - Kompileerida saab CL käsuga mvn package
-- Jar faili saab jooksutada CL käsuga mvn java:exec
+- Jar faili saab jooksutada CL käsuga mvn exec:java
 
 ### Etapp 1
 ####
