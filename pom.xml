@@ -47,8 +47,21 @@
       <artifactId>exec-maven-plugin</artifactId>
       <version>1.2.1</version>
       <configuration>
-        <mainClass>com.utoopproject.app.App</mainClass>
+        <mainClass> com.utoopproject.app.App </mainClass>
       </configuration>
+
+      <executions>
+        <execution>
+          <phase>verify</phase>
+          <goals>
+              <goal>exec</goal>
+          </goals>
+          <configuration>
+            <mainClass>com.utoopproject.app.App</mainClass>
+          </configuration>
+        </execution>
+      </executions>
+
     </plugin>
 
     </plugins>

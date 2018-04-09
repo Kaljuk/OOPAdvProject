@@ -13,8 +13,11 @@ public class App {
         System.out.println("1. launch server");
         System.out.println("2. launch client");
 
+        System.out.println(scannerInt(sc));
+
         // Check the input and launch the selected option
         if (sc.hasNextInt()) {
+            
             int option = sc.nextInt();
 
             if (option == 1) {
@@ -33,9 +36,30 @@ public class App {
 
                 // Start a new client
                 Client client = new Client(serverAddress, username);
+                // Client.start(); ?
+
             } else {
                 System.out.println("Invalid option!");
             }
         }
+    }
+
+    /**
+     * @param  scan - Scanner entity
+     * @return Integer as from scanner
+     */
+    private static int scannerInt(Scanner scan) {
+        boolean gotInt = false;
+        int scannedInt = 0;
+        while (!gotInt) {
+            try {
+                scannedInt = Integer.valueOf(scan.nextLine());
+                gotInt     = true;
+            } catch (NumberFormatException e) {
+                gotInt     = false;
+                System.out.print("\nIntegers only, please try again: ");
+            }
+        }
+        return scannedInt;
     }
 }
