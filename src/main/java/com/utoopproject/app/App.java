@@ -15,7 +15,7 @@ public class App {
 
         // Check the input and launch the selected option
         // Check input
-        int appChoice = ScannerMethods.scannerInt(sc);
+        int appChoice = ScannerMethods.scannerInt(sc, "1. launch server\n2. launch client\n", new int[]{1,2});
         
         if (appChoice == 1) {
             Server server = new Server();
