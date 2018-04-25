@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 /**
  * ScannerMethods
- */         
+ */
 public class ScannerMethods {
 
     // Integer input
@@ -40,10 +40,10 @@ public class ScannerMethods {
         return scannerInt(scan, errorMsg, new int[]{});
     }
 
-    
+
     /**
      * TODO: Add errorMsg as an anonymous hashset to show error msgs on different errors
-     * TODO: Add error handling on nonNumeric errors (what are the other errors that can surface?)  
+     * TODO: Add error handling on nonNumeric errors (what are the other errors that can surface?)
      * @param  scan - Scanner entity
      * @param  errorMsg - Message to show when user input is different from needed
      * @param  fittingOptions - Answers that meet requrements
@@ -64,10 +64,11 @@ public class ScannerMethods {
                         if (fittingOptions[i] == scannedInt) {
                             gotInt = true;
                             break;
-                        } else {
-                            gotInt = false;
-                            System.out.println(errorMsg);
                         }
+                    }
+
+                    if(!gotInt) {
+                        System.out.println(errorMsg);
                     }
                 }
             } catch (NumberFormatException e) {
@@ -90,10 +91,10 @@ public class ScannerMethods {
         boolean gotString    = false;
         String scannedString = "";
         while (!gotString) {
-            
+
             scannedString = String.valueOf(scan.nextLine());
-            if (scannedString != "") {
-                gotString = true;   
+            if (!scannedString.equals("")) {
+                gotString = true;
             } else {
                 // Go for another loop
                 gotString = false;
