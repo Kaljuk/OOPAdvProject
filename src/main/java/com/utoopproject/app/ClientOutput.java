@@ -16,10 +16,8 @@ public class ClientOutput implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("ClientOutput started");
-        while (scanner.hasNextLine()) {
+        while (true) {
             String message = scanner.nextLine();
-            System.out.println("Client is outputting message");
 
             try {
                 dOut.writeUTF(message);
@@ -27,7 +25,6 @@ public class ClientOutput implements Runnable {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            System.out.println("Wrote the message to output");
         }
     }
 }

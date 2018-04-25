@@ -12,10 +12,8 @@ public class ClientInput implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("ClientInpput started");
         while (true) {
             try {
-                System.out.println("Listening for input");
                 String message = dIn.readUTF();
                 System.out.println(message);
             } catch (IOException e) {
