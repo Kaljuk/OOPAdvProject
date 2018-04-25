@@ -1,4 +1,12 @@
-
 target
 
 .vscode
+
+# Intellij
+.idea/
+*.iml
+
+# Eclipse
+.project
+.classpath
+.settings/
