@@ -29,7 +29,7 @@ public class Client {
     private void askForInput() throws Exception {
 
         DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-
+        /// TODO: remove scanner and replace it with the one from app.java 
         Scanner sc = new Scanner(System.in);
 
         while (sc.hasNextLine()) {

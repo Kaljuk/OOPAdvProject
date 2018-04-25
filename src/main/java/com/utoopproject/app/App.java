@@ -34,6 +34,9 @@ public class App {
             Client client = new Client(serverAddress, username);
             // Client.start(); ?
         }
+
+        // Close scanner 
+        sc.close();
     }
 }
     
