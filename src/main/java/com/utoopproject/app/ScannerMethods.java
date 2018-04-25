@@ -14,18 +14,7 @@ public class ScannerMethods {
      * @return Integer as from scanner
      */
     public static int scannerInt(Scanner scan) {
-        boolean gotInt = false;
-        int scannedInt = 0;
-        while (!gotInt) {
-            try {
-                scannedInt = Integer.valueOf(scan.nextLine());
-                gotInt     = true;
-            } catch (NumberFormatException e) {
-                gotInt     = false;
-                System.out.print("\nIntegers only, please try again: ");
-            }
-        }
-        return scannedInt;
+        return scannerInt(scan, "\nIntegers only, please try again: ");
     }
 
 
@@ -35,6 +24,7 @@ public class ScannerMethods {
      * @return Integer as from scanner
      */
     public static int scannerInt(Scanner scan, String errorMsg) {
+        /*
         boolean gotInt = false;
         int scannedInt = 0;
         while (!gotInt) {
@@ -46,7 +36,8 @@ public class ScannerMethods {
                 System.out.print(errorMsg);
             }
         }
-        return scannedInt;
+        */
+        return scannerInt(scan, errorMsg, new int[]{});
     }
 
     
@@ -64,16 +55,21 @@ public class ScannerMethods {
         while (!gotInt) {
             try {
                 scannedInt = Integer.valueOf(scan.nextLine());
-                for(int i=0; i<fittingOptions.length;i++) {
-                    if (fittingOptions[i] == scannedInt) {
-                        gotInt = true;
-                        break;
-                    } else {
-                        gotInt = false;
-                        System.out.println(errorMsg);
+                // if no requirements, accept the input
+                if (fittingOptions.length == 0) {
+                    gotInt = true;
+                } else {
+                    // Check if input meets requirements
+                    for(int i=0; i<fittingOptions.length;i++) {
+                        if (fittingOptions[i] == scannedInt) {
+                            gotInt = true;
+                            break;
+                        } else {
+                            gotInt = false;
+                            System.out.println(errorMsg);
+                        }
                     }
                 }
-                
             } catch (NumberFormatException e) {
                 gotInt     = false;
                 System.out.print(errorMsg);
@@ -83,6 +79,7 @@ public class ScannerMethods {
     }
 
     // // // // String INPUT // // // // 
+    ///TODO: add answer requirements and their checking in next overload method
 
     /**
      * @param  scan     - Scanner entity
@@ -93,19 +90,15 @@ public class ScannerMethods {
         boolean gotString    = false;
         String scannedString = "";
         while (!gotString) {
-            try {
-                scannedString = String.valueOf(scan.nextLine());
-                if (scannedString != "") {
-                    gotString = true;   
-                } else {
-                    // Go for another loop
-                    gotString = false;
-                    // Show errorMsg when input hasnt met requirements
-                    System.out.println(errorMsg);
-                }
-            } catch (NumberFormatException e) {
+            
+            scannedString = String.valueOf(scan.nextLine());
+            if (scannedString != "") {
+                gotString = true;   
+            } else {
+                // Go for another loop
                 gotString = false;
-                System.out.print(errorMsg);
+                // Show errorMsg when input hasnt met requirements
+                System.out.println(errorMsg);
             }
         }
         return scannedString;
