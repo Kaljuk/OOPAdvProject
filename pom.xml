@@ -17,10 +17,9 @@
     
   </dependencies>
 
-  <!-- To compile with 1.5 sest v1.5 is not supported apparently -->
   <properties>
-    <maven.compiler.source>1.6</maven.compiler.source>
-    <maven.compiler.target>1.6</maven.compiler.target>
+    <maven.compiler.source>1.9</maven.compiler.source>
+    <maven.compiler.target>1.9</maven.compiler.target>
   </properties>
   <!-- DEFAULT MANIFEST -->
   <build>
@@ -56,9 +55,6 @@
           <goals>
               <goal>exec</goal>
           </goals>
-          <configuration>
-            <mainClass>com.utoopproject.app.App</mainClass>
-          </configuration>
         </execution>
       </executions>
 
