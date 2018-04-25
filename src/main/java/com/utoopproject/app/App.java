@@ -15,13 +15,13 @@ public class App {
 
         // Check the input and launch the selected option
         // Check input
-        int appChoice = ScannerMethods.scannerInt(sc, "1. launch server\n2. launch client\n", new int[]{1,2});
-        
+        int appChoice = ScannerMethods.scannerInt(sc, "1. launch server\n2. launch client\n", new int[]{1, 2});
+
         if (appChoice == 1) {
             Server server = new Server();
             server.startServer();
         } else if (appChoice == 2) {
-            
+
             // Ask the user for server IP address
             System.out.println("Enter the server IP address: ");
             String serverAddress = ScannerMethods.scannerString(sc, "Not Fitting input");
@@ -32,7 +32,7 @@ public class App {
 
             // Start a new client
             Client client = new Client(serverAddress, username);
-            // Client.start(); ?
+            client.start();
         }
 
         // Close scanner 
