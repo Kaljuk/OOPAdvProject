@@ -19,7 +19,7 @@ public class App {
 
         if (appChoice == 1) {
             Server server = new Server();
-            server.startServer();
+            //server.startServer();
         } else if (appChoice == 2) {
 
             // Ask the user for server IP address
@@ -31,9 +31,8 @@ public class App {
             String username = ScannerMethods.scannerString(sc, "");
 
             // Start a new client
-            Client client = new Client(serverAddress, username);
-            client.start();
+            Client client = new Client(serverAddress, username, sc);
+            //client.start();
         }
     }
 }
-    

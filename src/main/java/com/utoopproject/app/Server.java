@@ -15,20 +15,21 @@ public class Server {
     private List<RequestHandler> connectedClients;
 
 
-    public Server() {
+    public Server() throws Exception {
         this.connectedClients = new ArrayList<RequestHandler>();
+        this.startServer();
         System.out.printf("[Server] Started <port %d>\n", serverPort);
     }
 
     public void startServer() throws Exception {
         serverOn = true;
         ServerSocket listen = new ServerSocket(serverPort);
+        System.out.println("Server on");
 
         try {
             while (serverOn) {
                 RequestHandler handleRequest = new RequestHandler(listen.accept(), ++clientsServed, this);
                 handleRequest.start();
-                System.out.println("server on");
 
                 connectedClients.add(handleRequest);
 
