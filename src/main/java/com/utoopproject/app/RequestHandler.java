@@ -3,6 +3,8 @@ package com.utoopproject.app;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Arrays;
+
 
 /**
  * RequestHandler
@@ -13,6 +15,7 @@ public class RequestHandler extends Thread {
     private DataOutputStream dataOut;
     private DataInputStream dataIn;
     private Server server;
+    private String[] lubatudKäsud = {"ALL", "PRIVATE", "FILE", "LOG"};
 
     public RequestHandler(Socket requestSocket, int clientNumber, Server server) {
         super(); //???
@@ -35,18 +38,26 @@ public class RequestHandler extends Thread {
 
             while (true) {
                 try {
-                    String clientInput = dataIn.readUTF();
-                    //System.out.println(line);
+                    /*dataOut.writeUTF("Pick one of the following, press ENTER and then enter your message: " + String.join(" ", lubatudKäsud));
+                    String clientPick = dataIn.readUTF();
+                    while (!Arrays.asList(lubatudKäsud).contains(clientPick)){
+                        dataOut.writeUTF("Pick one of the following, press ENTER and then enter your message: " + String.join(" ", lubatudKäsud));
+                        clientPick = dataIn.readUTF();
+                    }*/
+                    String clientPick = dataIn.readUTF();
 
-                    // Tell the server to send this message to all the other clients
-                    //Server.messageClients(this, line);
                     //TODO sündmused nagu private, all, show log etc ja vastavalt info kuvada enne(olemasolevatest võimalustest) ja pärast
-                    //TODO private ainult requestHandleri id pealt? vb ok, sest private msg saaja määrataks username'iga
-                    for (RequestHandler connectedClient: server.getConnectedClients()) {
-                        if (connectedClient.getClientID() != this.clientID){
-                            connectedClient.dataOut.writeUTF(clientInput);
-                        }
+                    // TODO private ainult requestHandleri id pealt? vb ok, sest private msg saaja määrataks username'iga
+                    switch (clientPick){
+                        default:
+                            for (RequestHandler connectedClient: server.getConnectedClients()) {
+                                if (connectedClient.getClientID() != this.clientID){
+                                    connectedClient.dataOut.writeUTF(clientPick);
+                                }
+                            }
+                            break;
                     }
+
                 } catch (IOException ioe) {
                     break;
                 }
