@@ -23,12 +23,12 @@ public class Server {
 
     public void startServer() throws Exception {
         serverOn = true;
-        ServerSocket listen = new ServerSocket(serverPort);
+        ServerSocket serverSocket = new ServerSocket(serverPort);
         System.out.println("Server on");
 
         try {
             while (serverOn) {
-                RequestHandler handleRequest = new RequestHandler(listen.accept(), ++clientsServed, this);
+                RequestHandler handleRequest = new RequestHandler(serverSocket, ++clientsServed, this);
                 handleRequest.start();
 
                 connectedClients.add(handleRequest);
@@ -37,7 +37,7 @@ public class Server {
             }
             //} catch() {
         } finally {
-            listen.close();
+            serverSocket.close();
         }
     }
 
