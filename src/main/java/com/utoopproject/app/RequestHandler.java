@@ -2,24 +2,24 @@ package com.utoopproject.app;
 
 
 import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Arrays;
 
 
 /**
  * RequestHandler
  */
 public class RequestHandler extends Thread {
-    private Socket socket;
+    private Socket messageSocket;
     private int clientID;
     private DataOutputStream dataOut;
     private DataInputStream dataIn;
     private Server server;
     private String[] lubatudKäsud = {"ALL", "PRIVATE", "FILE", "LOG"};
+    private String username;
 
-    public RequestHandler(Socket requestSocket, int clientNumber, Server server) {
-        super(); //???
-        this.socket = requestSocket;
+    public RequestHandler(ServerSocket serverSocket, int clientNumber, Server server) throws IOException {
+        this.messageSocket = serverSocket.accept();
         this.clientID = clientNumber;
         this.server = server;
     }
@@ -30,11 +30,9 @@ public class RequestHandler extends Thread {
             //TODO username?
 
 
-            dataIn = new DataInputStream(socket.getInputStream());
-
-            dataOut = new DataOutputStream(socket.getOutputStream());
-
-            //boolean listen = true;
+            dataIn = new DataInputStream(messageSocket.getInputStream());
+            dataOut = new DataOutputStream(messageSocket.getOutputStream());
+            this.username = dataIn.readUTF();
 
             while (true) {
                 try {
@@ -47,14 +45,26 @@ public class RequestHandler extends Thread {
                     String clientPick = dataIn.readUTF();
 
                     //TODO sündmused nagu private, all, show log etc ja vastavalt info kuvada enne(olemasolevatest võimalustest) ja pärast
-                    // TODO private ainult requestHandleri id pealt? vb ok, sest private msg saaja määrataks username'iga
+                    //TODO private ainult requestHandleri id pealt? vb ok, sest private msg saaja määrataks username'iga
                     switch (clientPick){
-                        default:
+                        case "All":
+                            String clientMessage = dataIn.readUTF();
                             for (RequestHandler connectedClient: server.getConnectedClients()) {
-                                if (connectedClient.getClientID() != this.clientID){
-                                    connectedClient.dataOut.writeUTF(clientPick);
+                                if (!connectedClient.getUsername().equals(this.username)){
+                                    connectedClient.dataOut.writeUTF(clientMessage);
                                 }
                             }
+                            break;
+                        case "Private":
+                            String kasutaja = dataIn.readUTF();
+                            String message = dataIn.readUTF();
+                            for (RequestHandler connectedClient: server.getConnectedClients()) {
+                                if (connectedClient.getUsername().equals(kasutaja)){
+                                    connectedClient.dataOut.writeUTF(message);
+                                }
+                            }
+                        case "File":
+                            //TODO
                             break;
                     }
 
@@ -67,26 +77,14 @@ public class RequestHandler extends Thread {
             System.out.println(String.format("Client %d error %s", this.clientID, e.toString()));
         } finally {
             try {
-                socket.close();
+                messageSocket.close();
             } catch (Exception e) {
                 System.out.println("Socket close error" + e.toString());
             }
         }
     }
 
-    public int getClientID() {
-        return clientID;
+    public String getUsername() {
+        return username;
     }
-
-    /**
-     * Sends a message to all the clients currently connected
-     *
-     * @param msg - The message which will be sent
-     *//*
-    public void sendMessage(String msg) throws IOException {
-        System.out.println("DEBUG: Writing message UTF");
-
-        dataOut.writeUTF(msg);
-        dataOut.flush();
-    }*/
 }

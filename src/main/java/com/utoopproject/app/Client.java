@@ -17,6 +17,7 @@ public class Client {
         this.socket = new Socket(serverAddress, 1111);
         this.scanner = scanner;
         this.username = username;
+
         this.start();
     }
 
