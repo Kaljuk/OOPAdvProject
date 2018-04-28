@@ -1,7 +1,6 @@
 package com.utoopproject.app;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -58,8 +57,24 @@ public class ClientOutput implements Runnable {
                     }
                     break;
                 case "File":
-                    //TODO
-                    break;
+                    try{
+                        System.out.println("Sisesta saaja kasutaja: ");
+                        String kasutaja = scanner.nextLine();
+                        dOut.writeUTF(kasutaja);
+                        System.out.println("Sisesta faili path: ");
+                        File file = new File(scanner.nextLine());
+                        InputStream fileInputStream = new FileInputStream(file);
+                        byte[] bytes = new byte[1024];
+                        int count = fileInputStream.read(bytes);
+                        while (count > 0){
+                            dOut.write(bytes, 0, count);
+                            count = fileInputStream.read(bytes);
+                        }
+                        fileInputStream.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    //TODO streamid kinni normaalsemalt
             }
 
         }

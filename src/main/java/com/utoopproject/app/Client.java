@@ -2,6 +2,7 @@ package com.utoopproject.app;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
@@ -27,13 +28,16 @@ public class Client {
 
 
         ClientOutput clientOutput = new ClientOutput(scanner, new DataOutputStream(socket.getOutputStream()), username);
-        ClientInput clientInput = new ClientInput(new DataInputStream(socket.getInputStream()));
+        ClientInput clientInput = new ClientInput(scanner, new DataInputStream(socket.getInputStream()));
+
 
         Thread thread1 = new Thread(clientOutput);
         thread1.start();
         Thread thread = new Thread(clientInput);
         thread.start();
         System.out.println("You are now connected");
+
+
     }
 
     public String getUsername() {
