@@ -32,25 +32,20 @@ public class RequestHandler extends Thread {
 
             dataIn = new DataInputStream(messageSocket.getInputStream());
             dataOut = new DataOutputStream(messageSocket.getOutputStream());
+            //OutputStream fileOut = new FileOutputStream(new File("rww"));
             this.username = dataIn.readUTF();
 
             while (true) {
                 try {
-                    /*dataOut.writeUTF("Pick one of the following, press ENTER and then enter your message: " + String.join(" ", lubatudKäsud));
-                    String clientPick = dataIn.readUTF();
-                    while (!Arrays.asList(lubatudKäsud).contains(clientPick)){
-                        dataOut.writeUTF("Pick one of the following, press ENTER and then enter your message: " + String.join(" ", lubatudKäsud));
-                        clientPick = dataIn.readUTF();
-                    }*/
                     String clientPick = dataIn.readUTF();
 
-                    //TODO sündmused nagu private, all, show log etc ja vastavalt info kuvada enne(olemasolevatest võimalustest) ja pärast
-                    //TODO private ainult requestHandleri id pealt? vb ok, sest private msg saaja määrataks username'iga
+                    //TODO Midagi veidi katki siin
                     switch (clientPick){
                         case "All":
                             String clientMessage = dataIn.readUTF();
                             for (RequestHandler connectedClient: server.getConnectedClients()) {
                                 if (!connectedClient.getUsername().equals(this.username)){
+                                    //connectedClient.dataOut.writeUTF("All");
                                     connectedClient.dataOut.writeUTF(clientMessage);
                                 }
                             }
@@ -60,12 +55,22 @@ public class RequestHandler extends Thread {
                             String message = dataIn.readUTF();
                             for (RequestHandler connectedClient: server.getConnectedClients()) {
                                 if (connectedClient.getUsername().equals(kasutaja)){
+                                    //onnectedClient.dataOut.writeUTF("Private");
                                     connectedClient.dataOut.writeUTF(message);
                                 }
                             }
-                        case "File":
-                            //TODO
                             break;
+                        case "File":
+                            /*String kasutaja1 = dataIn.readUTF();
+                            for (RequestHandler connectedClient: server.getConnectedClients()) {
+                                if (connectedClient.getUsername().equals(kasutaja1)){
+                                    connectedClient.dataOut.writeUTF("File");
+                                    connectedClient.dataOut.writeUTF("Kasutaja " + this.username + " soovib sulle faili saata");
+                                    if (dataIn.readUTF().equals("y")){
+
+                                    }
+                                }
+                            }*/
                     }
 
                 } catch (IOException ioe) {
