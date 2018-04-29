@@ -1,6 +1,7 @@
 package com.utoopproject.app;
 
 import java.io.*;
+import java.sql.*;
 import java.net.ServerSocket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class Server {
 
     public Server() throws Exception {
         this.connectedClients = new ArrayList<RequestHandler>();
+        this.createDatabase();
         this.startServer();
         System.out.printf("[Server] Started <port %d>\n", serverPort);
     }
@@ -43,6 +45,16 @@ public class Server {
         } finally {
             serverSocket.close();
         }
+    }
+
+    public void createDatabase() throws Exception {
+        Class.forName("org.h2.Driver");
+        Connection databaseConnection = DriverManager.getConnection("jdbc:h2:file:./database");
+        databaseConnection.prepareStatement("CREATE TABLE IF NOT EXISTS users (" +
+                "username VARCHAR(64) NOT NULL PRIMARY KEY, " +
+                "password VARCHAR(32) NOT NULL)").executeUpdate();
+        databaseConnection.close();
+        System.out.println("Database created");
     }
 
     public List<RequestHandler> getConnectedClients() {
