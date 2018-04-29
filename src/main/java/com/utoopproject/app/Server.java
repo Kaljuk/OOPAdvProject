@@ -46,6 +46,11 @@ public class Server {
         return connectedClients;
     }
 
+    /**
+     * Writes the string into chat log text file, with a timestamp with current date and time in front of it.
+     *
+     * @param message the string to log
+     */
     public void writeToLog(String message) {
         try (OutputStream out = new FileOutputStream("chatlog.txt", true);
              OutputStreamWriter textOut = new OutputStreamWriter(out, "UTF-8");
@@ -61,9 +66,6 @@ public class Server {
     private void addToClientHandlers(RequestHandler connectedClient) {
         connectedClients.add(connectedClient);
     }
-
-
-
 
     /*public static void messageClients(RequestHandler sender, String message) throws IOException {
         System.out.println("DEBUG: Sending the entered message to other clients");
