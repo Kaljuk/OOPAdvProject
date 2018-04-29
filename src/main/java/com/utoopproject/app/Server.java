@@ -1,8 +1,10 @@
 package com.utoopproject.app;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,7 +15,6 @@ public class Server {
     private boolean serverOn = false;
     private int clientsServed = 0;
     private List<RequestHandler> connectedClients;
-
 
     public Server() throws Exception {
         this.connectedClients = new ArrayList<RequestHandler>();
@@ -43,6 +44,17 @@ public class Server {
 
     public List<RequestHandler> getConnectedClients() {
         return connectedClients;
+    }
+
+    public void writeToLog(String message) {
+        try (OutputStream out = new FileOutputStream("chatlog.txt", true);
+             OutputStreamWriter textOut = new OutputStreamWriter(out, "UTF-8")){
+
+            String timeStamp = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date());
+            textOut.write("[" + timeStamp + "] " + message + "\n");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void addToClientHandlers(RequestHandler connectedClient) {
