@@ -33,6 +33,8 @@ public class RequestHandler extends Thread {
             dataIn = new DataInputStream(messageSocket.getInputStream());
             dataOut = new DataOutputStream(messageSocket.getOutputStream());
             //OutputStream fileOut = new FileOutputStream(new File("rww"));
+
+            this.dataOut.writeUTF("\nLatest messages in the chat: \n" + server.getLatestMessages()); // Send latest messages to the client
             this.username = dataIn.readUTF();
 
             while (true) {
@@ -43,7 +45,8 @@ public class RequestHandler extends Thread {
                     switch (clientPick){
                         case "All":
                             String clientMessage = dataIn.readUTF();
-                            server.writeToLog(clientMessage);
+                            server.writeToLog(clientMessage); // Write it to the server log
+                            server.addLatestMessage(clientMessage); // Add it to the recent messages linked list
 
                             for (RequestHandler connectedClient: server.getConnectedClients()) {
                                 if (!connectedClient.getUsername().equals(this.username)){
