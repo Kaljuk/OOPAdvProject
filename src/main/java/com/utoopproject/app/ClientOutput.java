@@ -9,7 +9,7 @@ public class ClientOutput implements Runnable {
     private Scanner scanner;
     private DataOutputStream dOut;
     private String username;
-    private ArrayList<String> lubatudCommandid = new ArrayList<>(Arrays.asList("All", "File", "Private", "Log"));
+    private ArrayList<String> lubatudCommandid = new ArrayList<>(Arrays.asList("All", "File", "Private", "Log", "File upload"));
 
     public ClientOutput(Scanner scanner, DataOutputStream dOut, String username) throws IOException {
         this.scanner = scanner;
@@ -21,7 +21,7 @@ public class ClientOutput implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("Pick one of the following: 'All', 'File', 'Private', 'Log'");
+        System.out.println("Pick one of the following: 'All', 'File', 'Private', 'Log', 'File upload'");
         while (true) {
             String pick = scanner.nextLine();
             while(!lubatudCommandid.contains(pick)){
@@ -56,14 +56,14 @@ public class ClientOutput implements Runnable {
                         throw new RuntimeException(e);
                     }
                     break;
-                case "File":
+                case "File upload":
+                    //ei tööta
                     try{
-                        System.out.println("Sisesta saaja kasutaja: ");
-                        String kasutaja = scanner.nextLine();
-                        dOut.writeUTF(kasutaja);
                         System.out.println("Sisesta faili path: ");
                         File file = new File(scanner.nextLine());
                         InputStream fileInputStream = new FileInputStream(file);
+                        System.out.println("Sisesta faili nimi: ");
+                        dOut.writeUTF(scanner.nextLine());
                         byte[] bytes = new byte[1024];
                         int count = fileInputStream.read(bytes);
                         while (count > 0){
@@ -74,7 +74,6 @@ public class ClientOutput implements Runnable {
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-                    //TODO streamid kinni normaalsemalt
             }
 
         }

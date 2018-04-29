@@ -20,6 +20,7 @@ public class ClientInput implements Runnable {
                 String message = dIn.readUTF();
                 System.out.println(message);
 
+                //ei tööta
                 /*String pick = dIn.readUTF();
                 switch (pick) {
                     case "All":
