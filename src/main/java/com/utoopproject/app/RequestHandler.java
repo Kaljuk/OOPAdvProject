@@ -43,6 +43,8 @@ public class RequestHandler extends Thread {
                     switch (clientPick){
                         case "All":
                             String clientMessage = dataIn.readUTF();
+                            server.writeToLog(clientMessage);
+
                             for (RequestHandler connectedClient: server.getConnectedClients()) {
                                 if (!connectedClient.getUsername().equals(this.username)){
                                     //connectedClient.dataOut.writeUTF("All");
