@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -15,6 +16,7 @@ public class Server {
     private boolean serverOn = false;
     private int clientsServed = 0;
     private List<RequestHandler> connectedClients;
+    private LinkedList<String> latestMessages = new LinkedList();
 
     public Server() throws Exception {
         this.connectedClients = new ArrayList<RequestHandler>();
@@ -61,6 +63,22 @@ public class Server {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void addLatestMessage(String message) {
+        if(latestMessages.size() >= 5) latestMessages.removeFirst();
+        latestMessages.addLast(message);
+    }
+
+    public String getLatestMessages() {
+        StringBuilder sb = new StringBuilder();
+        if(latestMessages.size() == 0) return "No messages found!";
+
+        for (String latestMessage : latestMessages) {
+            sb.append(latestMessage + "\n");
+        }
+
+        return sb.toString();
     }
 
     private void addToClientHandlers(RequestHandler connectedClient) {
