@@ -15,6 +15,7 @@ public class Server {
     private boolean serverOn = false;
     private int clientsServed = 0;
     private List<RequestHandler> connectedClients;
+    private List<File> failidServeris = new ArrayList<>();
 
     public Server() throws Exception {
         this.connectedClients = new ArrayList<RequestHandler>();
@@ -56,6 +57,20 @@ public class Server {
             throw new RuntimeException(e);
         }
     }
+    //ei tööta
+    public void receiveFile(String fileName, DataInputStream dataIn) throws IOException {
+            File file = new File(fileName);
+            failidServeris.add(file);
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+
+            byte[] puhver = new byte[1024];
+            int loetud = dataIn.read(puhver);
+            while (loetud > 0) {
+              fileOutputStream.write(puhver, 0, loetud); // ainult andmetega täidetud osa!
+              loetud = dataIn.read(puhver); // loeme järgmise tüki
+            }
+            fileOutputStream.close();
+        }
 
     private void addToClientHandlers(RequestHandler connectedClient) {
         connectedClients.add(connectedClient);
