@@ -48,10 +48,11 @@ public class Server {
 
     public void writeToLog(String message) {
         try (OutputStream out = new FileOutputStream("chatlog.txt", true);
-             OutputStreamWriter textOut = new OutputStreamWriter(out, "UTF-8")){
+             OutputStreamWriter textOut = new OutputStreamWriter(out, "UTF-8");
+             BufferedWriter buffered = new BufferedWriter(textOut)){
 
             String timeStamp = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date());
-            textOut.write("[" + timeStamp + "] " + message + "\n");
+            buffered.write("[" + timeStamp + "] " + message + "\n");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
