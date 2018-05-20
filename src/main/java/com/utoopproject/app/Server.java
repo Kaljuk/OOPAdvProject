@@ -19,6 +19,8 @@ public class Server {
     private List<RequestHandler> connectedClients;
     private List<File> failidServeris = new ArrayList<>();
     private LinkedList<String> latestMessages = new LinkedList();
+    private BufferedWriter logWriter; // To keep the log file open
+    private ServerSocket serverSocket;
 
     public Server() throws Exception {
         this.connectedClients = new ArrayList<RequestHandler>();
@@ -28,10 +30,12 @@ public class Server {
 
     public void startServer() throws Exception {
         serverOn = true;
-        ServerSocket serverSocket = new ServerSocket(serverPort);
         System.out.printf("[Server] Started <port %d>\n", serverPort);
 
         try {
+            serverSocket = new ServerSocket(serverPort);
+            logWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("chatlog.txt", true), "UTF-8"));
+
             while (serverOn) {
                 RequestHandler handleRequest = new RequestHandler(serverSocket, ++clientsServed, this);
                 handleRequest.start();
@@ -40,10 +44,17 @@ public class Server {
 
                 System.out.printf("Client connected [ID: %d]\n", clientsServed);
             }
-            //} catch() {
         } finally {
+            logWriter.close();
             serverSocket.close();
         }
+    }
+
+    // TODO Send message to all clients that the server will close
+    public void stopServer() throws IOException {
+        serverOn = false;
+        serverSocket.close();
+
     }
 
     public void createDatabase() throws Exception {
@@ -60,12 +71,12 @@ public class Server {
         return connectedClients;
     }
 
-    public boolean loginOrRegisterUser (String username, String password) throws Exception {
+    public boolean loginOrRegisterUser(String username, String password) throws Exception {
         Class.forName("org.h2.Driver");
-        try(Connection conn = DriverManager.getConnection("jdbc:h2:file:./database")) {
+        try (Connection conn = DriverManager.getConnection("jdbc:h2:file:./database")) {
             UserSystem user = new UserSystem(conn);
 
-            if(user.userExists(username))
+            if (user.userExists(username))
                 return user.loginUser(username, password);
             else
                 return user.registerUser(username, password);
@@ -77,40 +88,35 @@ public class Server {
      *
      * @param message the string to log
      */
-    public void writeToLog(String message) {
-        try (OutputStream out = new FileOutputStream("chatlog.txt", true);
-             OutputStreamWriter textOut = new OutputStreamWriter(out, "UTF-8");
-             BufferedWriter buffered = new BufferedWriter(textOut)){
-
-            String timeStamp = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date());
-            buffered.write("[" + timeStamp + "] " + message + "\n");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public void writeToLog(String message) throws IOException {
+        String timeStamp = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date());
+        logWriter.write("[" + timeStamp + "] " + message + "\n");
+        logWriter.flush();
     }
+
     //ei tööta
     public void receiveFile(String fileName, DataInputStream dataIn) throws IOException {
-            File file = new File(fileName);
-            failidServeris.add(file);
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
+        File file = new File(fileName);
+        failidServeris.add(file);
+        FileOutputStream fileOutputStream = new FileOutputStream(file);
 
-            byte[] puhver = new byte[1024];
-            int loetud = dataIn.read(puhver);
-            while (loetud > 0) {
-              fileOutputStream.write(puhver, 0, loetud); // ainult andmetega täidetud osa!
-              loetud = dataIn.read(puhver); // loeme järgmise tüki
-            }
-            fileOutputStream.close();
+        byte[] puhver = new byte[1024];
+        int loetud = dataIn.read(puhver);
+        while (loetud > 0) {
+            fileOutputStream.write(puhver, 0, loetud); // ainult andmetega täidetud osa!
+            loetud = dataIn.read(puhver); // loeme järgmise tüki
         }
+        fileOutputStream.close();
+    }
 
     public void addLatestMessage(String message) {
-        if(latestMessages.size() >= 5) latestMessages.removeFirst();
+        if (latestMessages.size() >= 5) latestMessages.removeFirst();
         latestMessages.addLast(message);
     }
 
     public String getLatestMessages() {
         StringBuilder sb = new StringBuilder();
-        if(latestMessages.size() == 0) return "No messages found!";
+        if (latestMessages.size() == 0) return "No messages found!";
 
         for (String latestMessage : latestMessages) {
             sb.append(latestMessage + "\n");

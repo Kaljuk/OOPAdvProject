@@ -16,7 +16,7 @@ public class RequestHandler extends Thread {
     private DataOutputStream dataOut;
     private DataInputStream dataIn;
     private Server server;
-    private String[] lubatudKäsud = {"ALL", "PRIVATE", "FILE", "LOG"};
+    private String[] lubatudKäsud = {"ALL", "PRIVATE", "FILE", "LOG", "STOP SERVER"};
     private String username;
     private String password;
 
@@ -43,7 +43,7 @@ public class RequestHandler extends Thread {
 
                 dataOut.writeUTF("All valid! You are now successfully logged in. ");
                 dataOut.writeUTF("\nLatest messages in the chat: \n" + server.getLatestMessages()); // Send latest messages to the client
-                dataOut.writeUTF("Pick one of the following: 'All', 'File', 'Private', 'Log', 'File upload'");
+                dataOut.writeUTF("Pick one of the following: 'All', 'File', 'Private', 'Log', 'File upload', 'Stop server'");
 
                 while (true) {
                     try {
@@ -51,6 +51,8 @@ public class RequestHandler extends Thread {
 
                         //TODO Midagi veidi katki siin
                         switch (clientPick) {
+                            case "Stop server":
+                                server.stopServer();
                             case "All":
                                 String clientMessage = dataIn.readUTF();
                                 server.writeToLog(clientMessage); // Write it to the server log
