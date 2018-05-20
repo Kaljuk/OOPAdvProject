@@ -9,7 +9,7 @@ public class ClientOutput implements Runnable {
     private Scanner scanner;
     private DataOutputStream dOut;
     private String username;
-    private ArrayList<String> lubatudCommandid = new ArrayList<>(Arrays.asList("All", "File", "Private", "Log", "File upload", "Stop server"));
+    private ArrayList<String> lubatudCommandid = new ArrayList<>(Arrays.asList("/file", "/private", "/log", "/fileupload", "/stopserver"));
 
     public ClientOutput(Scanner scanner, DataOutputStream dOut, String username, String password) throws IOException {
         this.scanner = scanner;
@@ -23,42 +23,45 @@ public class ClientOutput implements Runnable {
     @Override
     public void run() {
         while (true) {
-            String pick = scanner.nextLine();
-            while(!lubatudCommandid.contains(pick)){
-                System.out.println("Choice not valid, pick again");
-                pick = scanner.nextLine();
-            }
-            //saadame requestHandlerile valiku
+            String line = scanner.nextLine();
+            String command;
+
+            if(line.startsWith("/")) {
+                command = line.split(" ", 2)[0];
+
+                if(!lubatudCommandid.contains(command))
+                    command = "error";
+            } else
+                command = "all";
+
             try {
-                dOut.writeUTF(pick);
+                dOut.writeUTF(command);
             } catch (IOException e) {
                 throw new RuntimeException("valiku edastamine ebaõnnestus: " + e);
             }
 
-            switch (pick){
-                case "All":
-                    String message = scanner.nextLine();
-                    try {
-                        dOut.writeUTF(username + ": " + message);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    break;
-                case "Private":
-                    try {
+            try {
+                switch (command) {
+                    case "all":
+                        dOut.writeUTF(username + ": " + line);
+                        break;
+
+                    case "error":
+                        dOut.writeUTF("Command not found, please try again!");
+                        break;
+
+                    case "/private":
                         System.out.println("Sisesta saaja kasutaja: ");
                         String kasutaja = scanner.nextLine();
                         dOut.writeUTF(kasutaja);
                         System.out.println("sisesta sõnum: ");
                         String message1 = scanner.nextLine();
                         dOut.writeUTF(username + ": " + message1);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    break;
-                case "File upload":
-                    //ei tööta
-                    try{
+
+                        break;
+                    case "/fileupload":
+                        //ei tööta
+
                         System.out.println("Sisesta faili path: ");
                         File file = new File(scanner.nextLine());
                         InputStream fileInputStream = new FileInputStream(file);
@@ -66,16 +69,16 @@ public class ClientOutput implements Runnable {
                         dOut.writeUTF(scanner.nextLine());
                         byte[] bytes = new byte[1024];
                         int count = fileInputStream.read(bytes);
-                        while (count > 0){
+                        while (count > 0) {
                             dOut.write(bytes, 0, count);
                             count = fileInputStream.read(bytes);
                         }
                         fileInputStream.close();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-            }
 
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

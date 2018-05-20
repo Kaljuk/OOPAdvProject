@@ -37,13 +37,13 @@ public class RequestHandler extends Thread {
             this.username = dataIn.readUTF();
             this.password = dataIn.readUTF();
 
-            dataOut.writeUTF("\nConnection established, server checking your login credentials.");
+            dataOut.writeUTF("Connection established, server checking your login credentials.");
 
             if (server.loginOrRegisterUser(username, password)) {
 
                 dataOut.writeUTF("All valid! You are now successfully logged in. ");
                 dataOut.writeUTF("\nLatest messages in the chat: \n" + server.getLatestMessages()); // Send latest messages to the client
-                dataOut.writeUTF("Pick one of the following: 'All', 'File', 'Private', 'Log', 'File upload', 'Stop server'");
+                dataOut.writeUTF("\nAvailable commands: '/file', '/private', '/log', '/fileupload', '/stopserver'");
 
                 while (true) {
                     try {
@@ -51,9 +51,9 @@ public class RequestHandler extends Thread {
 
                         //TODO Midagi veidi katki siin
                         switch (clientPick) {
-                            case "Stop server":
+                            case "/stopserver":
                                 server.stopServer();
-                            case "All":
+                            case "all":
                                 String clientMessage = dataIn.readUTF();
                                 server.writeToLog(clientMessage); // Write it to the server log
                                 server.addLatestMessage(clientMessage); // Add it to the recent messages linked list
@@ -65,7 +65,10 @@ public class RequestHandler extends Thread {
                                     }
                                 }
                                 break;
-                            case "Private":
+                            case "error":
+                                String msg = dataIn.readUTF();
+                                this.dataOut.writeUTF(msg);
+                            case "/private":
                                 String kasutaja = dataIn.readUTF();
                                 String message = dataIn.readUTF();
                                 for (RequestHandler connectedClient : server.getConnectedClients()) {
@@ -75,7 +78,7 @@ public class RequestHandler extends Thread {
                                     }
                                 }
                                 break;
-                            case "File":
+                            case "/file":
                             /*String kasutaja1 = dataIn.readUTF();
                             for (RequestHandler connectedClient: server.getConnectedClients()) {
                                 if (connectedClient.getUsername().equals(kasutaja1)){
