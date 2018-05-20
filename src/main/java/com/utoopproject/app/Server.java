@@ -4,10 +4,8 @@ import java.io.*;
 import java.sql.*;
 import java.net.ServerSocket;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Server
@@ -143,6 +141,11 @@ public class Server {
 
     public int getClientsServed() {
         return this.clientsServed;
+    }
+
+    public String getTime () {
+        String timeStamp = new SimpleDateFormat("HH:mm:ss").format(new Date());
+        return timeStamp;
     }
 
     /**

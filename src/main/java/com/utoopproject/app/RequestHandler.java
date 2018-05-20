@@ -3,8 +3,10 @@ package com.utoopproject.app;
 
 import javax.xml.crypto.Data;
 import java.io.*;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 
 
 /**
@@ -43,7 +45,7 @@ public class RequestHandler extends Thread {
 
                 dataOut.writeUTF("All valid! You are now successfully logged in. ");
                 dataOut.writeUTF("\nLatest messages in the chat: \n" + server.getLatestMessages()); // Send latest messages to the client
-                dataOut.writeUTF("\nAvailable commands: '/file', '/private', '/log', '/fileupload', '/stopserver'");
+                dataOut.writeUTF("\nAvailable commands: '/file', '/private', '/log', '/fileupload', '/stopserver', '/online', '/ip', '/time'");
 
                 while (true) {
                     try {
@@ -89,7 +91,31 @@ public class RequestHandler extends Thread {
                                     }
                                 }
                             }*/
+                            case "/online":
+                                this.dataOut.writeUTF("\nCurrently online users:");
+                                for (RequestHandler connectedClient : server.getConnectedClients()) {
+                                    this.dataOut.writeUTF(connectedClient.getUsername());
+                                }
+                                break;
+                            case "/ip":
+                                URL whatismyip = new URL("http://checkip.amazonaws.com");
+                                String ip = null, hostname = null;
+
+                                try (BufferedReader in = new BufferedReader(new InputStreamReader(whatismyip.openStream()))) {
+                                    InetAddress thisIp = InetAddress.getLocalHost();
+
+                                    hostname = thisIp.getHostName();
+                                    ip = in.readLine();
+                                }
+
+                                this.dataOut.writeUTF("IP Address: " + ip);
+                                this.dataOut.writeUTF("Host Name: " + hostname);
+                                break;
+                            case "/time":
+                                this.dataOut.writeUTF("Current server time: " + this.server.getTime());
+                                break;
                         }
+
 
                     } catch (IOException ioe) {
                         break;

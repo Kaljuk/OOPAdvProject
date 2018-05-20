@@ -9,7 +9,7 @@ public class ClientOutput implements Runnable {
     private Scanner scanner;
     private DataOutputStream dOut;
     private String username;
-    private ArrayList<String> lubatudCommandid = new ArrayList<>(Arrays.asList("/file", "/private", "/log", "/fileupload", "/stopserver"));
+    private ArrayList<String> lubatudCommandid = new ArrayList<>(Arrays.asList("/file", "/private", "/log", "/fileupload", "/stopserver", "/online", "/ip", "/time"));
 
     public ClientOutput(Scanner scanner, DataOutputStream dOut, String username, String password) throws IOException {
         this.scanner = scanner;
@@ -74,6 +74,7 @@ public class ClientOutput implements Runnable {
                             count = fileInputStream.read(bytes);
                         }
                         fileInputStream.close();
+
 
                 }
             } catch (IOException e) {
