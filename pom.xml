@@ -43,6 +43,7 @@
         <configuration>
           <archive>
             <manifest>
+              <mainClass>com.utoopproject.app.App</mainClass>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
               <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
             </manifest>

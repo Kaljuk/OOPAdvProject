@@ -24,13 +24,12 @@ public class Server {
         this.connectedClients = new ArrayList<RequestHandler>();
         this.createDatabase();
         this.startServer();
-        System.out.printf("[Server] Started <port %d>\n", serverPort);
     }
 
     public void startServer() throws Exception {
         serverOn = true;
         ServerSocket serverSocket = new ServerSocket(serverPort);
-        System.out.println("Server on");
+        System.out.printf("[Server] Started <port %d>\n", serverPort);
 
         try {
             while (serverOn) {
@@ -54,11 +53,23 @@ public class Server {
                 "username VARCHAR(64) NOT NULL PRIMARY KEY, " +
                 "password VARCHAR(32) NOT NULL)").executeUpdate();
         databaseConnection.close();
-        System.out.println("Database created");
+        System.out.println("Database created (if it didn't exist before)");
     }
 
     public List<RequestHandler> getConnectedClients() {
         return connectedClients;
+    }
+
+    public boolean loginOrRegisterUser (String username, String password) throws Exception {
+        Class.forName("org.h2.Driver");
+        try(Connection conn = DriverManager.getConnection("jdbc:h2:file:./database")) {
+            UserSystem user = new UserSystem(conn);
+
+            if(user.userExists(username))
+                return user.loginUser(username, password);
+            else
+                return user.registerUser(username, password);
+        }
     }
 
     /**

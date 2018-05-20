@@ -34,17 +34,8 @@ public class App {
             System.out.println("Enter your password to login/register: ");
             String password = ScannerMethods.scannerString(sc, "");
 
-            // Register or login the user (depending on if the user exists)
-            if(UserSystem.userExists(username)) {
-                System.out.println("User exists.");
-                UserSystem.loginUser(username, password);
-            } else {
-                System.out.println("User doesn't exist.");
-                UserSystem.registerUser(username, password);
-            }
-
             // Start a new client
-            Client client = new Client(serverAddress, username, sc);
+            Client client = new Client(serverAddress, username, password, sc);
             //client.start();
         }
     }

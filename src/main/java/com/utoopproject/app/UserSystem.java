@@ -10,61 +10,43 @@ import org.apache.commons.codec.binary.Hex;
 
 
 public class UserSystem {
+    Connection conn;
 
-    public static Connection getDatabaseConnection() throws Exception {
-        Class.forName("org.h2.Driver");
-        return DriverManager.getConnection("jdbc:h2:file:./database");
+    public UserSystem(Connection databaseConnection) {
+        this.conn = databaseConnection;
     }
 
-    public static boolean userExists(String username) throws Exception {
-        Connection conn = getDatabaseConnection();
-        try {
-            PreparedStatement stmt = conn.prepareStatement("SELECT DISTINCT username FROM users WHERE username = ?");
-            stmt.setString(1, username);
-            ResultSet rs = stmt.executeQuery();
+    public boolean userExists(String username) throws Exception {
+        PreparedStatement stmt = conn.prepareStatement("SELECT DISTINCT username FROM users WHERE username = ?");
+        stmt.setString(1, username);
+        ResultSet rs = stmt.executeQuery();
 
-            return rs.next();
-        } finally {
-            conn.close();
-        }
+        return rs.next();
     }
 
-    public static void loginUser(String username, String password) throws Exception {
-        Connection conn = getDatabaseConnection();
-        try {
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users WHERE username = ?");
-            stmt.setString(1, username);
+    public boolean loginUser(String username, String password) throws Exception {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users WHERE username = ?");
+        stmt.setString(1, username);
 
-            ResultSet rs = stmt.executeQuery();
-            rs.next();
+        ResultSet rs = stmt.executeQuery();
+        rs.next();
 
-            if (hashPassword(password).equals(rs.getString("password"))) {
-                System.out.println("You have successfully logged in!");
-            } else {
-                // TODO After a failed attempt, ask for the password again
-                throw new RuntimeException("Wrong password!");
-            }
-
-        } finally {
-            conn.close();
+        if (hashPassword(password).equals(rs.getString("password"))) {
+            return true;
+        } else {
+            // TODO After a failed attempt, ask for the password again
+            return false;
         }
+
 
     }
 
-    public static void registerUser(String username, String password) throws Exception {
-        Connection conn = getDatabaseConnection();
-        try {
-            PreparedStatement stmt = conn.prepareStatement("INSERT INTO users VALUES (?, ?)");
-            stmt.setString(1, username);
-            stmt.setString(2, hashPassword(password));
-            stmt.executeUpdate();
-
-            System.out.println("Welcome! Your user has been registered.");
-
-        } finally {
-            conn.close();
-        }
-
+    public boolean registerUser(String username, String password) throws Exception {
+        PreparedStatement stmt = conn.prepareStatement("INSERT INTO users VALUES (?, ?)");
+        stmt.setString(1, username);
+        stmt.setString(2, hashPassword(password));
+        stmt.executeUpdate();
+        return true;
     }
 
     // MD5 is not secure, don't use in public applications

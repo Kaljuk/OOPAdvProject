@@ -1,6 +1,7 @@
 package com.utoopproject.app;
 
 
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -17,6 +18,7 @@ public class RequestHandler extends Thread {
     private Server server;
     private String[] lubatudKäsud = {"ALL", "PRIVATE", "FILE", "LOG"};
     private String username;
+    private String password;
 
     public RequestHandler(ServerSocket serverSocket, int clientNumber, Server server) throws IOException {
         this.messageSocket = serverSocket.accept();
@@ -26,46 +28,52 @@ public class RequestHandler extends Thread {
 
     @Override
     public void run() {
+
         try {
-            //TODO username?
-
-
             dataIn = new DataInputStream(messageSocket.getInputStream());
             dataOut = new DataOutputStream(messageSocket.getOutputStream());
             //OutputStream fileOut = new FileOutputStream(new File("rww"));
 
-            this.dataOut.writeUTF("\nLatest messages in the chat: \n" + server.getLatestMessages()); // Send latest messages to the client
             this.username = dataIn.readUTF();
+            this.password = dataIn.readUTF();
 
-            while (true) {
-                try {
-                    String clientPick = dataIn.readUTF();
+            dataOut.writeUTF("\nConnection established, server checking your login credentials.");
 
-                    //TODO Midagi veidi katki siin
-                    switch (clientPick){
-                        case "All":
-                            String clientMessage = dataIn.readUTF();
-                            server.writeToLog(clientMessage); // Write it to the server log
-                            server.addLatestMessage(clientMessage); // Add it to the recent messages linked list
+            if (server.loginOrRegisterUser(username, password)) {
 
-                            for (RequestHandler connectedClient: server.getConnectedClients()) {
-                                if (!connectedClient.getUsername().equals(this.username)){
-                                    //connectedClient.dataOut.writeUTF("All");
-                                    connectedClient.dataOut.writeUTF(clientMessage);
+                dataOut.writeUTF("All valid! You are now successfully logged in. ");
+                dataOut.writeUTF("\nLatest messages in the chat: \n" + server.getLatestMessages()); // Send latest messages to the client
+                dataOut.writeUTF("Pick one of the following: 'All', 'File', 'Private', 'Log', 'File upload'");
+
+                while (true) {
+                    try {
+                        String clientPick = dataIn.readUTF();
+
+                        //TODO Midagi veidi katki siin
+                        switch (clientPick) {
+                            case "All":
+                                String clientMessage = dataIn.readUTF();
+                                server.writeToLog(clientMessage); // Write it to the server log
+                                server.addLatestMessage(clientMessage); // Add it to the recent messages linked list
+
+                                for (RequestHandler connectedClient : server.getConnectedClients()) {
+                                    if (!connectedClient.getUsername().equals(this.username)) {
+                                        //connectedClient.dataOut.writeUTF("All");
+                                        connectedClient.dataOut.writeUTF(clientMessage);
+                                    }
                                 }
-                            }
-                            break;
-                        case "Private":
-                            String kasutaja = dataIn.readUTF();
-                            String message = dataIn.readUTF();
-                            for (RequestHandler connectedClient: server.getConnectedClients()) {
-                                if (connectedClient.getUsername().equals(kasutaja)){
-                                    //onnectedClient.dataOut.writeUTF("Private");
-                                    connectedClient.dataOut.writeUTF(message);
+                                break;
+                            case "Private":
+                                String kasutaja = dataIn.readUTF();
+                                String message = dataIn.readUTF();
+                                for (RequestHandler connectedClient : server.getConnectedClients()) {
+                                    if (connectedClient.getUsername().equals(kasutaja)) {
+                                        //onnectedClient.dataOut.writeUTF("Private");
+                                        connectedClient.dataOut.writeUTF(message);
+                                    }
                                 }
-                            }
-                            break;
-                        case "File":
+                                break;
+                            case "File":
                             /*String kasutaja1 = dataIn.readUTF();
                             for (RequestHandler connectedClient: server.getConnectedClients()) {
                                 if (connectedClient.getUsername().equals(kasutaja1)){
@@ -76,14 +84,17 @@ public class RequestHandler extends Thread {
                                     }
                                 }
                             }*/
-                    }
+                        }
 
-                } catch (IOException ioe) {
-                    break;
+                    } catch (IOException ioe) {
+                        break;
+                    }
                 }
+            } else {
+                dataOut.writeUTF("Unable to log into this account! Please try again.");
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println(String.format("Client %d error %s", this.clientID, e.toString()));
         } finally {
             try {

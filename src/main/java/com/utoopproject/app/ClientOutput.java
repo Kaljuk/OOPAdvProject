@@ -11,17 +11,17 @@ public class ClientOutput implements Runnable {
     private String username;
     private ArrayList<String> lubatudCommandid = new ArrayList<>(Arrays.asList("All", "File", "Private", "Log", "File upload"));
 
-    public ClientOutput(Scanner scanner, DataOutputStream dOut, String username) throws IOException {
+    public ClientOutput(Scanner scanner, DataOutputStream dOut, String username, String password) throws IOException {
         this.scanner = scanner;
         this.dOut = dOut;
         this.username = username;
         dOut.writeUTF(username); //edastame requestHandlerile username'i
+        dOut.writeUTF(password);
     }
 
 
     @Override
     public void run() {
-        System.out.println("Pick one of the following: 'All', 'File', 'Private', 'Log', 'File upload'");
         while (true) {
             String pick = scanner.nextLine();
             while(!lubatudCommandid.contains(pick)){

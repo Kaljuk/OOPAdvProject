@@ -11,13 +11,15 @@ public class Client {
 
     //private final int serverPort = 1111;
     private final String username;
+    private final String password;
     private final Socket socket;
     private Scanner scanner;
 
-    public Client(String serverAddress, String username, Scanner scanner) throws Exception {
+    public Client(String serverAddress, String username, String password, Scanner scanner) throws Exception {
         this.socket = new Socket(serverAddress, 1111);
         this.scanner = scanner;
         this.username = username;
+        this.password = password;
 
         this.start();
     }
@@ -27,17 +29,13 @@ public class Client {
         //TODO oleks vaja mingi muu lahendus leida, et hiljem streamid sulgeda
 
 
-        ClientOutput clientOutput = new ClientOutput(scanner, new DataOutputStream(socket.getOutputStream()), username);
+        ClientOutput clientOutput = new ClientOutput(scanner, new DataOutputStream(socket.getOutputStream()), username, password);
         ClientInput clientInput = new ClientInput(scanner, new DataInputStream(socket.getInputStream()));
-
 
         Thread thread1 = new Thread(clientOutput);
         thread1.start();
         Thread thread = new Thread(clientInput);
         thread.start();
-        System.out.println("You are now connected");
-
-
     }
 
     public String getUsername() {
